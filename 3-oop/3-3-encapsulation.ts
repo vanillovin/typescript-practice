@@ -57,4 +57,37 @@
   // maker.coffeeBeans = -34 // invalid
   const maker = CoffeeMaker.makeMachine(32);
   console.log(maker);
+
+  // # Class의 Getter와 Setter
+  // - get으로 접근할 때마다 새로운 데이터를 만들고 개선할 수 있음. 호출 시점에
+  // - 함수로 작성하지만, 일반 멤버변수처럼 접근하고 사용 가능.
+  // - 생성자에 접근 제어자를 설정해두면 바로 멤버 변수로 설정됨!
+  //   constructor(private firstName: string) = this.firstName
+  // - 다양한 연산을 할 수 있음. 어떤 계산을 해야할 때 유용함.
+  // - 원하는 유효성 검사를 할 수 있음.
+  class User {
+    get fullName(): string {
+      return `${this.firstName} ${this.lastName}`;
+    }
+
+    // 내부적으로 쓰이는 어떤 데이터를 반환한다면?
+    private internalAge = 23;
+    get age(): number {
+      return this.internalAge;
+    }
+
+    set age(num: number) {
+      if (num < 0) {
+        throw new Error('');
+      }
+      this.internalAge = num;
+    }
+
+    constructor(private firstName: string, private lastName: string) {}
+  }
+
+  const user = new User('Steve', 'Jobs');
+  // 멤버 변수처럼 보이지만 사실 getter 와 setter를 이용
+  user.age = 6; // setter 호출 -> 내부적으로 internalAge 멤버변수를 6으로 업데이트
+  console.log(user.fullName);
 }

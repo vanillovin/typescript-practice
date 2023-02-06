@@ -1,9 +1,4 @@
 {
-  /**
-   * 추상화하는 방법
-   * 1. interface 규약 계약서/명세서
-   */
-
   type CoffeeCup = {
     shots: number;
     hasMilk: boolean;
@@ -71,7 +66,48 @@
   maker.makeCoffee(2);
 
   const maker2: CoffeeMaker = CoffeeMachine.makeMachine(32);
-  // maker2.fillCoffeeBeans(32); CoffeeMaker는 makeCoffee 밖에 없음.
-  // fillCoffeeBeans api는 CoffeeMaker interface에 존재하지 않음. 사용 x
   maker2.makeCoffee(2);
+
+  const maker3: CommercialCoffeeMaker = CoffeeMachine.makeMachine(32);
+  maker3.clean();
+  maker3.fillCoffeeBeans(32);
+  maker3.makeCoffee(2);
+
+  class AmateurUser {
+    constructor(private machine: CoffeeMaker) {}
+    makeCoffee() {
+      const coffee = this.machine.makeCoffee(2);
+      console.log(coffee);
+    }
+  }
+
+  class ProBarista {
+    constructor(private machine: CommercialCoffeeMaker) {}
+    makeCoffee() {
+      const coffee = this.machine.makeCoffee(2);
+      console.log(coffee);
+      this.machine.fillCoffeeBeans(45); // +
+      this.machine.clean(); // +
+    }
+  }
+
+  // 포인트! 동일한 object의 instance 일지라도, 이 obj는 두 가지의 interface를 구현하기 때문에
+  // 아마추어, 프로 바리스타는 커피머신을 받는것이아닌 커피메이커를 "생성자에서 받아"
+  // 이 인터페이스에서 규약된 클래스보단 좀 더 좁은 범위의 규약된 인터페이스 함수들만 접근 가능
+  const maker4: CoffeeMachine = CoffeeMachine.makeMachine(32);
+
+  const amateurs = new AmateurUser(maker4);
+  amateurs.makeCoffee();
+  /* grinding beans for 2
+  heating up... 🔥
+  Pulling 2 shots...☕
+  { shots: 2, hasMilk: false } */
+
+  const pro = new ProBarista(maker4);
+  pro.makeCoffee();
+  /* grinding beans for 2
+  heating up... 🔥
+  Pulling 2 shots...☕
+  { shots: 2, hasMilk: false }
+  cleaning the machine...🧼 */
 }
